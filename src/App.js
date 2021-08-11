@@ -1,34 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import {useParams} from "react-router-dom";
 
-import getGifs from './services/Api'
 import Gif from './components/Gif'
 import Search from './components/Search'
+import useGifs from './hooks/useGifs';
 
 import './App.css';
 
 function App() {
-
-  const [gifs, setGifs] = useState({"data":[]});
-
-  useEffect(() => {
-    getGifs({ keyword: 'f1' }).then(gifs => setGifs(gifs))
-  }, []);
-
-  const GetSearch = (e) => {
-    if(e.target.value!=="")
-      getGifs({ keyword: e.target.value }).then(gifs => setGifs(gifs))
-    else
-      getGifs({ keyword: 'f1' }).then(gifs => setGifs(gifs))
-  }
+  let { keyword } = useParams();
+  const {gifs} = useGifs({keyword});
 
   return (
     <div className="App">
-      <section> <Search mySearch={GetSearch}/> </section>
+      <section> <Search /> </section>
       <section className="App-content">
         { gifs.data.map((i) => 
-            <Gif key={i.id} url={i.images.downsized_medium.url} title={i.title}/>
-          ) 
-        }
+            <Gif  key={i.id} 
+                  url={i.images.downsized_medium.url} 
+                  title={i.title}/>
+        ) }
       </section>
     </div>
   );
